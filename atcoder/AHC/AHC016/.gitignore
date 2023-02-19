@@ -1,0 +1,5 @@
+tools/*.txt
+tools/*.csv
+tools/in/*
+tools/out/*
+tools/target/**

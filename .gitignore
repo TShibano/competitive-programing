@@ -1,0 +1,5 @@
+# AHC関連の除外
+/atcoder/AHC/*/tools/in/
+/atcoder/AHC/*/tools/out/
+/atcoder/AHC/*/tools/*.csv
+/atcoder/AHC/*/tools/*.txt
