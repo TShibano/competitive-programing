@@ -20,12 +20,20 @@ parse_int(str=readline()) = parse(Int64, str)
 
 
 # body ====
-#
+"""2次元座標"""
 struct Coord
     x::Int64
     y::Int64
 end
 
+"""問題の入力
+N: グリッドの幅(N×Nマス)
+W: 水源の数
+K: 家の数
+C: 消費する体力のベース値
+Water: W個の水源の位置を格納した配列
+House: K個の家の位置を格納した配列
+"""
 struct Input
     N::Int64
     W::Int64
@@ -35,12 +43,13 @@ struct Input
     House::Vector{Coord}
 end
 
+"""問題の出力"""
 struct Output
     coord::Coord
     power::Int64
 end
 
-struct ExeResult
+struct Result
     r::Int64
 end
 
@@ -66,7 +75,7 @@ function parser_input()::Input
         y, x = parse_list_int()
         y += 1
         x += 1
-        house[i, :] = Coord(x, y)
+        house[i] = Coord(x, y)
     end
     return Input(N, W, K, C, water, house)
 end
@@ -74,6 +83,16 @@ end
 
 function parser_output(output::Output)::Nothing
     println(output.coord.y, " ", output.coord.x, " ", output.power)
+end
+
+function parser_input_interactive()::Result
+    r = parse_int()
+    return Result(r)
+end
+
+function interactive(output::Output)::Result
+    parser_output(output)
+    return parser_input_interactive()
 end
 
 """TODO"""
@@ -97,13 +116,53 @@ function calc_l1(coord1::Coord, coord2::Coord)::Int64
 end
 
 """水源にL1距離が最も近い水源を探す"""
-function greed_clustering(input::Input)
-    
+function clustering_nearing_water(input::Input)::Vector{Vector{Int64}}
+    # 水源に対してクラスタリングする家を2次元リストで格納する
+    res = [[] for _ in 1:input.W]
+    for k in 1:input.K
+        l1 = 10^6
+        nearist_water_id = 0
+        now_house = input.House[k]
+        for w in 1:input.W
+            now_water = input.Water[w]
+            tmp_l1 = calc_l1(now_house, now_water)
+            if l1 > tmp_l1
+                nearist_water_id = w
+                l1 = tmp_l1
+            else
+                continue
+            end
+        end
+        push!(res[nearist_water_id], k)
+    end
+    return res
+end
+
+"""
+    calc_center(coord_list::Vector{Coord})::Coord
+
+複数点の重心を求める
+"""
+function calc_center(coord_list::Vector{Coord})::Coord
+    n = length(coord_list)
+    sum_x = 0
+    sum_y = 0
+    for i in 1:n
+        sum_x += coord_list[i].x
+        sum_y += coord_list[y].y
+    end
+    # 整数にする必要あり
+    gx = sum_x ÷ n
+    gy = sum_y ÷ n
+    return Coord(gx, gy)
 end
 
 
-function solve()
-    
+function solve1_0(input::Input)
+    # クラスタリングする
+    # クラスタリングしたグループ内での重心を求める
+    # 同一グループはその重心を目掛けて掘り進める
+    #
 end
 
 function main()
